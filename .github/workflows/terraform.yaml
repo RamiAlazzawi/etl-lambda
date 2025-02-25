@@ -1,11 +1,11 @@
 name: Terraform Plan and Apply
 
 on:
-  push:
+  pull_request:
     branches:
-      - main  # Trigger on pushes to the main branch
+      - main  # Trigger when a PR is merged into the main branch
     paths:
-      - 'terraform/**.tf'  # Trigger only when Terraform files are changed
+      - '**.tf'  # Trigger only when Terraform files are changed
 
 jobs:
   terraform:
