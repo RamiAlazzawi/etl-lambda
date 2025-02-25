@@ -4,8 +4,10 @@ on:
   pull_request:
     branches:
       - main  # Trigger when a PR is merged into the main branch
+    types:
+      - closed  # Trigger when the PR is closed (merged or closed without merging)
     paths:
-      - '**.tf'  # Trigger only when Terraform files are changed
+      - 'terraform/**.tf'  # Trigger only when Terraform files in the `terraform` folder are changed
 
 jobs:
   terraform:
@@ -15,29 +17,34 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+        if: github.event.pull_request.merged == true  # Run only if the PR was merged
 
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
           terraform_version: 1.5.0  # Use the desired Terraform version
+        if: github.event.pull_request.merged == true  # Run only if the PR was merged
 
       - name: Terraform Init
         id: init
         run: terraform init
-        working-directory: ./terraform
+        working-directory: ./terraform  # Run commands in the `terraform` folder
+        if: github.event.pull_request.merged == true  # Run only if the PR was merged
 
       - name: Terraform Plan
         id: plan
         run: terraform plan
-        working-directory: ./terraform
+        working-directory: ./terraform  # Run commands in the `terraform` folder
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        if: github.event.pull_request.merged == true  # Run only if the PR was merged
 
       - name: Terraform Apply
         id: apply
         run: terraform apply -auto-approve
-        working-directory: ./terraform
+        working-directory: ./terraform  # Run commands in the `terraform` folder
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        if: github.event.pull_request.merged == true  # Run only if the PR was merged
