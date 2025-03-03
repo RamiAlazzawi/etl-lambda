@@ -7,5 +7,5 @@ variable "region" {
 variable "bucket_name" {
   description = "The name of the S3 bucket"
   type        = string
-  default     = "ra-files-bucket"  # Default value
+  default     = "rami-files-bucket"  # Default value
 }
